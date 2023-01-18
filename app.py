@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{user}:{password}@{host}/{db_n
 
 db = SQLAlchemy(app)
 
-from tables import VendingMachine, Product
+from tables import VendingMachine, Product, VendingMCProduct
 
 
 @app.route('/')
@@ -48,20 +48,63 @@ def add_machine():
     return jsonify(machine)
 
 
-
-@app.route('/machines/edit/<int:m_id>', methods=['POST'])
-def edit_machine(m_id):
+@app.route('/machines/edit/<int:mc_id>', methods=['POST'])
+def edit_machine(mc_id):
     data = request.form
+    machine = VendingMachine.find_by_id(mc_id)
+    if machine:
+        machine.name = data['name']
+        machine.location = data['location']
+        db.session.commit()
 
-    machine = VendingMachine.find_by_id(m_id)
-    machine.name = data['name']
-    machine.location = data['location']
+        list_tuple_data = extract_pid_quantity(data['pid'])
 
-    db.session.commit()
-    return jsonify(machine)
+        # print(VendingMCProduct.get_all_product(machine.id))
+
+        # list of p_id that should be
+        list_new_data = []
+        num_new_products = 0
+        for elem in list_tuple_data:
+            p_id, p_qt = elem
+            relation = VendingMCProduct.get(machine.id, p_id)
+            if relation:
+                edit_product_in_machine(machine.id, p_id, p_qt)
+                num_new_products += 1
+                list_new_data.append(p_id)
+            else:
+                add_product_to_machine(machine.id, p_id, p_qt)
+                num_new_products += 1
+                list_new_data.append(p_id)
+
+        # if len(list_new_data) != num_new_products:
+        for rel in VendingMCProduct.get_all_product(machine.id):
+            if rel.product_id not in list_new_data:
+                VendingMCProduct.delete(machine.id, rel.product_id)
+        return jsonify(machine)
+    return jsonify(Error="Machine not found")
 
 
-# @app.route('/machines/<int:mc_id>/add_product/<int:p_id>', methods=['POST'])
+def edit_product_in_machine(mc_id, p_id, quantity):
+    machine = VendingMachine.find_by_id(mc_id)
+    if machine:
+        relation = VendingMCProduct.get(machine.id, p_id)
+        # print(relation)
+        relation.quantity = quantity
+        db.session.commit()
+        return jsonify(machine)
+    return jsonify(Error="Machine not found")
+
+
+def delete_product_in_machine(mc_id, p_id):
+    machine = VendingMachine.find_by_id(mc_id)
+    if machine:
+        relation = VendingMCProduct.get(machine.id, p_id)
+        if relation:
+            VendingMCProduct.delete(machine.id, p_id)
+            return jsonify(Message="Delete successful")
+    return jsonify(Error="Machine not found or There is no product in this machine")
+
+
 def add_product_to_machine(mc_id, p_id, quantity):
     machine = VendingMachine.find_by_id(mc_id)
     if machine:
@@ -79,12 +122,10 @@ def add_product_to_machine(mc_id, p_id, quantity):
 
 if __name__ == '__main__':
     # from tables import VendingMachine
-
     # with app.app_context():
     #     db.drop_all()
     #     db.create_all()
     #
     #     mc = VendingMachine()
     #     db.session.add(mc)
-
     app.run()

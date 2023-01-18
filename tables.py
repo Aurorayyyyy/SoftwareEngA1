@@ -32,9 +32,6 @@ class VendingMachine(db.Model):
         return VendingMachine.query.get(id)
 
 
-    # def create(self, name, location):
-
-
 
 
 @dataclass
@@ -49,8 +46,8 @@ class Product(db.Model):
     belong = db.relationship('VendingMCProduct', backref='product', lazy=True)
 
     @staticmethod
-    def find_by_id(id):
-        return Product.query.get(id)
+    def find_by_id(p_id):
+        return Product.query.get(p_id)
 
 
 @dataclass
@@ -63,8 +60,19 @@ class VendingMCProduct(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
 
     @staticmethod
-    def get(vm_id, mc_id):
-        VendingMCProduct.query.filter_by(vendingMC_id=vm_id, product_id=mc_id).first()
+    def get(vm_id, p_id):
+        return VendingMCProduct.query.filter_by(vendingMC_id=vm_id, product_id=p_id).first()
+
+    @staticmethod
+    def get_all_product(vm_id):
+        return VendingMCProduct.query.filter_by(vendingMC_id=vm_id).all()
+
+    @staticmethod
+    def delete(vm_id, p_id):
+        VendingMCProduct.query.filter_by(vendingMC_id=vm_id, product_id=p_id).delete()
+        db.session.commit()
+
+
 
         # same_product_id = VendingMCProduct.vendingMC_id == vm_id
         # same_machine_id = VendingMCProduct.product_id == mc_id
