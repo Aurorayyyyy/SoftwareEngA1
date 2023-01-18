@@ -58,9 +58,6 @@ def edit_machine(mc_id):
         db.session.commit()
 
         list_tuple_data = extract_pid_quantity(data['pid'])
-
-        # print(VendingMCProduct.get_all_product(machine.id))
-
         # list of p_id that should be
         list_new_data = []
         num_new_products = 0
@@ -83,6 +80,17 @@ def edit_machine(mc_id):
         return jsonify(machine)
     return jsonify(Error="Machine not found")
 
+
+@app.route('/machines/delete/<int:mc_id>', methods=['POST'])
+def delete_machine(mc_id):
+    machine = VendingMachine.find_by_id(mc_id)
+    if machine:
+        for each in VendingMCProduct.get_all_product(mc_id):
+            VendingMCProduct.delete(machine.id, each.product_id)
+        db.session.commit()
+        VendingMachine.delete(machine.id)
+        return jsonify(Message="Delete Successful")
+    return jsonify(Error="Machine not found")
 
 def edit_product_in_machine(mc_id, p_id, quantity):
     machine = VendingMachine.find_by_id(mc_id)
@@ -116,8 +124,6 @@ def add_product_to_machine(mc_id, p_id, quantity):
     return jsonify(Error="Machine not found")
 
 
-# @app.route('/machines/<int:mc_id>/edit/<>/', methods=['POST'])
-# def edit_machine()
 
 
 if __name__ == '__main__':

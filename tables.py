@@ -31,6 +31,11 @@ class VendingMachine(db.Model):
     def find_by_id(id):
         return VendingMachine.query.get(id)
 
+    @staticmethod
+    def delete(vm_id):
+        VendingMachine.query.filter_by(id=vm_id).delete()
+        db.session.commit()
+
 
 
 
