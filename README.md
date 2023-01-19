@@ -1,6 +1,6 @@
 # Vending Machine Tracking Application to manage all the vending machines in muic (stock etc).
 
-### In this project I use python-flask for creating the backend. For this project, it will only have backend. The way to test it out to use postman (which will explain below).
+### In this project I use python-flask for creating the backend. For this project, it will only have backend that return json file. The way to test it out to use postman (which will explain below).
 
 ## Database Model
 ![Database_A1-2](https://user-images.githubusercontent.com/104582029/213465209-07e3101a-13dc-4681-89cd-e9c9d4914301.jpg)
