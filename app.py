@@ -20,7 +20,8 @@ from tables import VendingMachine, Product, VendingMCProduct
 
 @app.route('/')
 def index():  # put application's code here
-    return 'Hello World!'
+    return 'Welcome to Vending Machine Tracking Application. Try to read readme.md in the github repo if you do not ' \
+           'understand '
 
 
 @app.route('/machines', methods=['GET'])
@@ -93,11 +94,11 @@ def delete_machine(mc_id):
         return jsonify(Message="Delete Successful")
     return jsonify(Error="Machine not found")
 
+
 def edit_product_in_machine(mc_id, p_id, quantity):
     machine = VendingMachine.find_by_id(mc_id)
     if machine:
         relation = VendingMCProduct.get(machine.id, p_id)
-        # print(relation)
         relation.quantity = quantity
         db.session.commit()
         return jsonify(machine)
@@ -124,12 +125,14 @@ def add_product_to_machine(mc_id, p_id, quantity):
         return jsonify(machine)
     return jsonify(Error="Machine not found")
 
+
 @app.route('/products/add', methods=['POST'])
 def add_product():
     data = request.form
     Product.add_product(data['name'], data['price'])
     product = Product.find_by_name(name=data['name'])
     return jsonify(product)
+
 
 @app.route('/products/edit/<int:p_id>', methods=['POST'])
 def edit_product(p_id):
@@ -141,6 +144,7 @@ def edit_product(p_id):
         db.session.commit()
         return jsonify(product)
     return jsonify(Error='Product not found')
+
 
 @app.route('/products/delete/<int:p_id>', methods=['POST'])
 def delete_product(p_id):
@@ -156,15 +160,5 @@ def delete_product(p_id):
     return jsonify(Error="Product not found")
 
 
-
-
-
 if __name__ == '__main__':
-    # from tables import VendingMachine
-    # with app.app_context():
-    #     db.drop_all()
-    #     db.create_all()
-    #
-    #     mc = VendingMachine()
-    #     db.session.add(mc)
     app.run()

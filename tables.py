@@ -1,13 +1,10 @@
-
 from app import db, app
 from dataclasses import dataclass
 from typing import List
 
 
-
 @dataclass
 class VendingMachine(db.Model):
-
     id: int
     name: str
     location: str
@@ -34,6 +31,7 @@ class VendingMachine(db.Model):
     @staticmethod
     def find_by_id(id):
         return VendingMachine.query.get(id)
+
     @staticmethod
     def find_by_name(name):
         return VendingMachine.query.filter_by(name=name).first()
@@ -62,9 +60,11 @@ class Product(db.Model):
     @staticmethod
     def find_by_id(p_id):
         return Product.query.get(p_id)
+
     @staticmethod
     def find_by_name(name):
         return Product.query.filter_by(name=name).first()
+
     @staticmethod
     def add_product(name, price):
         product = Product.find_by_name(name)
@@ -72,6 +72,7 @@ class Product(db.Model):
             new_product = Product(name=name, price=price)
             db.session.add(new_product)
             db.session.commit()
+
     @staticmethod
     def get_all():
         return Product.query.all()
@@ -107,15 +108,6 @@ class VendingMCProduct(db.Model):
     def delete(vm_id, p_id):
         VendingMCProduct.query.filter_by(vendingMC_id=vm_id, product_id=p_id).delete()
         db.session.commit()
-
-
-
-        # same_product_id = VendingMCProduct.vendingMC_id == vm_id
-        # same_machine_id = VendingMCProduct.product_id == mc_id
-        # VendingMCProduct.query.filter_by(
-        #     (same_product_id) and
-        #     (same_machine_id)
-        # ).first()
 
 # if __name__ == '__main__':
 #     # test database
