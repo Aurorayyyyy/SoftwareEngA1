@@ -73,7 +73,7 @@ def edit_machine(mc_id):
                 list_new_data.append(p_id)
 
         # if len(list_new_data) != num_new_products:
-        for rel in VendingMCProduct.get_all_product(machine.id):
+        for rel in VendingMCProduct.get_all_relation_by_mc(machine.id):
             if rel.product_id not in list_new_data:
                 VendingMCProduct.delete(machine.id, rel.product_id)
         return jsonify(machine)
@@ -84,9 +84,11 @@ def edit_machine(mc_id):
 def delete_machine(mc_id):
     machine = VendingMachine.find_by_id(mc_id)
     if machine:
-        for each in VendingMCProduct.get_all_product(mc_id):
-            VendingMCProduct.delete(machine.id, each.product_id)
-        db.session.commit()
+        relation = VendingMCProduct.get_all_relation_by_mc(mc_id)
+        if relation:
+            for each in relation:
+                VendingMCProduct.delete(machine.id, each.product_id)
+            db.session.commit()
         VendingMachine.delete(machine.id)
         return jsonify(Message="Delete Successful")
     return jsonify(Error="Machine not found")
@@ -128,6 +130,31 @@ def add_product():
     Product.add_product(data['name'], data['price'])
     product = Product.find_by_name(name=data['name'])
     return jsonify(product)
+
+@app.route('/products/edit/<int:p_id>', methods=['POST'])
+def edit_product(p_id):
+    data = request.form
+    product = Product.find_by_id(p_id)
+    if product:
+        product.name = data['name']
+        product.price = data['price']
+        db.session.commit()
+        return jsonify(product)
+    return jsonify(Error='Product not found')
+
+@app.route('/products/delete/<int:p_id>', methods=['POST'])
+def delete_product(p_id):
+    product = Product.find_by_id(p_id)
+    if product:
+        relation = VendingMCProduct.get_all_relation_by_prod(p_id)
+        if relation:
+            for each in relation:
+                VendingMCProduct.delete(each.vendingMC_id, p_id)
+            db.session.commit()
+        Product.delete(product.id)
+        return jsonify(Message="Delete Successful")
+    return jsonify(Error="Product not found")
+
 
 
 
