@@ -36,9 +36,8 @@ def get_all_product():
 @app.route('/machines/add', methods=['POST'])
 def add_machine():
     data = request.form
-    machine = VendingMachine(name=data['name'], location=data['location'])
-    db.session.add(machine)
-    db.session.commit()
+    VendingMachine.add_machine(data['name'], data['location'])
+    machine = VendingMachine.find_by_name(name=data['name'])
 
     list_tuple_data = extract_pid_quantity(data['pid'])
     for elem in list_tuple_data:
@@ -122,6 +121,13 @@ def add_product_to_machine(mc_id, p_id, quantity):
         db.session.commit()
         return jsonify(machine)
     return jsonify(Error="Machine not found")
+
+@app.route('/products/add', methods=['POST'])
+def add_product():
+    data = request.form
+    Product.add_product(data['name'], data['price'])
+    product = Product.find_by_name(name=data['name'])
+    return jsonify(product)
 
 
 

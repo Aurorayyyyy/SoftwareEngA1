@@ -27,9 +27,21 @@ class VendingMachine(db.Model):
             return VendingMCProduct(vendingMC_id=self.id, product_id=product_id, quantity=quantity)
         return None
 
+
+    @staticmethod
+    def add_machine(name, location):
+        machine = VendingMachine.find_by_name(name)
+        if machine is None:
+            new_machine = VendingMachine(name=name, location=location)
+            db.session.add(new_machine)
+            db.session.commit()
+
     @staticmethod
     def find_by_id(id):
         return VendingMachine.query.get(id)
+    @staticmethod
+    def find_by_name(name):
+        return VendingMachine.query.filter_by(name=name).first()
 
     @staticmethod
     def delete(vm_id):
@@ -53,6 +65,16 @@ class Product(db.Model):
     @staticmethod
     def find_by_id(p_id):
         return Product.query.get(p_id)
+    @staticmethod
+    def find_by_name(name):
+        return Product.query.filter_by(name=name).first()
+    @staticmethod
+    def add_product(name, price):
+        product = Product.find_by_name(name)
+        if product is None:
+            new_product = Product(name=name, price=price)
+            db.session.add(new_product)
+            db.session.commit()
 
 
 @dataclass
