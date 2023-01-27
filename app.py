@@ -42,11 +42,11 @@ def add_machine():
     data = request.form
     VendingMachine.add_machine(data['name'], data['location'])
     machine = VendingMachine.find_by_name(name=data['name'])
-
-    prod_id_and_quantity_list = extract_product_id_and_quantity(data['pid'])
-    for prod_id_and_quantity in prod_id_and_quantity_list:
-        product_id, quantity = prod_id_and_quantity
-        add_product_to_machine(machine.id, product_id, quantity)
+    if data["pid"] != "":
+        prod_id_and_quantity_list = extract_product_id_and_quantity(data['pid'])
+        for prod_id_and_quantity in prod_id_and_quantity_list:
+            product_id, quantity = prod_id_and_quantity
+            add_product_to_machine(machine.id, product_id, quantity)
     return jsonify(machine)
 
 
