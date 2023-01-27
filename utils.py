@@ -1,7 +1,9 @@
 from typing import List, Tuple
 
+ProductIDAndQuantity = Tuple[int, int]
 
-def extract_pid_quantity(raw_data: str):
+
+def extract_product_id_and_quantity(raw_data: str) -> List[ProductIDAndQuantity]:
     tuple_data = raw_data.split(',')
     formatted_data: List[Tuple[int, int]] = []
     for elem in tuple_data:
