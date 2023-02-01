@@ -17,7 +17,7 @@ You have to pass the url in the postman with the right method (in this case is G
 This will list all vending machine stocks & products as show in the picture.
 
 ### Example
-![image](https://user-images.githubusercontent.com/104582029/213472163-3f95cafd-a6d7-4b06-9378-4b2e405da675.png) 
+![image](https://user-images.githubusercontent.com/104582029/213472163-3f95cafd-a6d7-4b06-9378-4b2e405da675.png)
 ![image](https://user-images.githubusercontent.com/104582029/213482636-950794da-f668-4533-9a0f-ebca5f959150.png)
 
 
@@ -50,6 +50,3 @@ Any relation that relate to the deleted machine or product will also deleted.
 ![image](https://user-images.githubusercontent.com/104582029/213484668-9418bf76-3a4d-4d0a-bf73-9c87c7db0f8c.png)
 
 ## PS. Data sample is in the tables.py uncommnet the code below to create database.
-
-
-
