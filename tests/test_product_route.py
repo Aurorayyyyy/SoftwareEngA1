@@ -46,6 +46,11 @@ class ProductTester(Tester):
     def post_product_edit_without_name_and_price(self, product_id: int) -> TestResponse:
         return self.client.post(f"/products/edit/{product_id}")
 
+    def post_product_delete(self, product_id: int) -> TestResponse:
+        return self.client.post(
+            f"/products/edit/{product_id}",
+        )
+
 
 @pytest.fixture()
 def tester(client: FlaskClient) -> ProductTester:
@@ -58,9 +63,12 @@ def test_get_all(tester: ProductTester):
 
 
 def test_add_product(tester: ProductTester):
-    add_product = tester.post_product_add("test_name", "100")
-    # print(add_product.json)
-    assert add_product.json == {"id": 1, "name": "test_name", "price": 100}
+    add_product1 = tester.post_product_add("test_name1", "100")
+    add_product2 = tester.post_product_add("test_name2", "102")
+    add_product3 = tester.post_product_add("test_name3", "104")
+    assert add_product1.json == {"id": 1, "name": "test_name1", "price": 100}
+    assert add_product2.json == {"id": 2, "name": "test_name2", "price": 102}
+    assert add_product3.json == {"id": 3, "name": "test_name3", "price": 104}
 
 
 def test_edit_product(tester: ProductTester):
@@ -76,4 +84,9 @@ def test_edit_product(tester: ProductTester):
     assert add_product.json == {"id": 1, "name": "test_name", "price": 100}
 
 
-# def test_delete_product(tester: ProductTester)
+def test_delete_product(tester: ProductTester):
+    tester.post_product_add("test_name1", "100")
+    tester.post_product_add("test_name2", "100")
+    tester.post_product_add("test_name3", "100")
+    tester.post_product_add("test_name4", "100")
+    tester.post_product_add("test_name5", "100")
