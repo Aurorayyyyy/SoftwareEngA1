@@ -6,7 +6,7 @@ from tests.conftest import Tester
 
 
 class ProductTester(Tester):
-    def get_all_machine(self) -> TestResponse:
+    def get_all_product(self) -> TestResponse:
         return self.client.get("/products")
 
     def post_product_add(self, name: str, price: str) -> TestResponse:
@@ -56,7 +56,7 @@ def tester(client: FlaskClient) -> ProductTester:
 
 
 def test_get_all(tester: ProductTester):
-    get_all_response = tester.get_all_machine()
+    get_all_response = tester.get_all_product()
     assert get_all_response.json == []
 
 
@@ -72,7 +72,6 @@ def test_add_product(tester: ProductTester):
 def test_edit_product(tester: ProductTester):
     tester.post_product_add("test_name", "100")
     add_product = tester.post_product_edit_price_only(1, "101")
-    print(add_product.json)
     assert add_product.json == {"id": 1, "name": "test_name", "price": 101}
     add_product = tester.post_product_edit_name_only(1, "test_name1")
     assert add_product.json == {"id": 1, "name": "test_name1", "price": 101}
@@ -89,12 +88,17 @@ def test_delete_product(tester: ProductTester):
     tester.post_product_add("test_name4", "100")
     tester.post_product_add("test_name5", "100")
 
+    message: str = "Delete Successful"
     delete1 = tester.post_product_delete(1)
-    assert delete1.json == {"Message": "Delete Successful"}
-    tester.post_product_delete(2)
-    tester.post_product_delete(3)
-    tester.post_product_delete(4)
-    tester.post_product_delete(5)
+    assert delete1.json == {"Message": message}
+    delete2 = tester.post_product_delete(2)
+    assert delete2.json == {"Message": message}
+    delete3 = tester.post_product_delete(3)
+    assert delete3.json == {"Message": message}
+    delete4 = tester.post_product_delete(4)
+    assert delete4.json == {"Message": message}
+    delete5 = tester.post_product_delete(5)
+    assert delete5.json == {"Message": message}
 
-    get_all_response = tester.get_all_machine()
+    get_all_response = tester.get_all_product()
     assert get_all_response.json == []

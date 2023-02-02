@@ -46,7 +46,7 @@ def index():  # noqa: ANN201
 
 @bp.route("/machines", methods=["GET"])
 def get_all_machines() -> Response:
-    return jsonify(VendingMachine.query.all())
+    return jsonify(VendingMachine.get_all())
 
 
 @bp.route("/products", methods=["GET"])
