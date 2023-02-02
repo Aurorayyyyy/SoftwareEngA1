@@ -6,7 +6,7 @@ from tests.conftest import Tester
 
 
 class ProductTester(Tester):
-    def get_all(self) -> TestResponse:
+    def get_all_machine(self) -> TestResponse:
         return self.client.get("/products")
 
     def post_product_add(self, name: str, price: str) -> TestResponse:
@@ -56,7 +56,7 @@ def tester(client: FlaskClient) -> ProductTester:
 
 
 def test_get_all(tester: ProductTester):
-    get_all_response = tester.get_all()
+    get_all_response = tester.get_all_machine()
     assert get_all_response.json == []
 
 
@@ -96,5 +96,5 @@ def test_delete_product(tester: ProductTester):
     tester.post_product_delete(4)
     tester.post_product_delete(5)
 
-    get_all_response = tester.get_all()
+    get_all_response = tester.get_all_machine()
     assert get_all_response.json == []

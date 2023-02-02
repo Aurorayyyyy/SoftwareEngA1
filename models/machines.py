@@ -24,8 +24,10 @@ class VendingMachine(db.Model):
         return [stock.to_dict() for stock in stocks]
 
     def edit_machine_name_and_location(self, name: str, location: str):
-        self.name = name
-        self.location = location
+        if name != "None":
+            self.name = name
+        if location != "None":
+            self.location = location
         db.session.commit()
 
     def add_product(self, product_id: int, quantity: int):

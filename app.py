@@ -59,7 +59,7 @@ def add_machine() -> Response:
     data = request.form
     VendingMachine.add_machine(data["name"], data["location"])
     machine = VendingMachine.find_by_name(name=data["name"])
-    if data["pid"] != "":
+    if data.get("pid") != "" and data.get("pid") is not None:
         prod_id_and_quantity_list = reformatting_product_id_and_quantity(data["pid"])
         for prod_id_and_quantity in prod_id_and_quantity_list:
             product_id, quantity = prod_id_and_quantity
@@ -72,18 +72,23 @@ def edit_machine(machine_id: int) -> Response:
     data = request.form
     machine = VendingMachine.find_by_id(machine_id)
     if machine:
-        machine.edit_machine_name_and_location(data["name"], data["location"])
-
-        list_prod_id_and_quantity = reformatting_product_id_and_quantity(data["pid"])
-        all_product_id_in_machine = (
-            machine.get_formatting_list_of_product_id_after_edit(
-                list_prod_id_and_quantity
-            )
+        machine.edit_machine_name_and_location(
+            str(data.get("name")), str(data.get("location"))
         )
-
-        for relation in VendingMCProduct.get_all_relation_by_mc(machine.id):
-            if relation.product_id not in all_product_id_in_machine:
-                VendingMCProduct.delete(machine.id, relation.product_id)
+        all_product_id_in_machine = list(tuple())
+        if data.get("pid") is not None and data.get("pid") != "":
+            list_prod_id_and_quantity = reformatting_product_id_and_quantity(
+                data["pid"]
+            )
+            all_product_id_in_machine = (
+                machine.get_formatting_list_of_product_id_after_edit(
+                    list_prod_id_and_quantity
+                )
+            )
+        if data.get("pid") is not None:
+            for relation in VendingMCProduct.get_all_relation_by_mc(machine.id):
+                if relation.product_id not in all_product_id_in_machine:
+                    VendingMCProduct.delete(machine.id, relation.product_id)
         return jsonify(machine)
     return jsonify(Error="Machine not found")
 
@@ -101,7 +106,7 @@ def delete_machine(machine_id: int) -> Response:
 @bp.route("/products/add", methods=["POST"])
 def add_product() -> Response:
     data = request.form
-    if data.get("name") != "None":
+    if data.get("name") is not None and data.get("price") is not None:
         Product.add_product(data["name"], int(data["price"]))
         product = Product.find_by_name(name=data["name"])
         return jsonify(product)
