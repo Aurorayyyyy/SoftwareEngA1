@@ -106,7 +106,7 @@ jobs:
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
-        if: steps.poetry-cache.outputs.cache-hit != 'true'
+#        if: steps.poetry-cache.outputs.cache-hit != 'true'
         run: poetry install
 
       - name: Build

@@ -88,7 +88,7 @@ def test_edit_machine(tester: MachineTester, tester_product: ProductTester):
     tester_product.post_product_add("test_name1", "100")
     tester_product.post_product_add("test_name2", "102")
     tester_product.post_product_add("test_name3", "103")
-    tester.post_machine_add("test_name1", "test_location", "(1:20),(2:30)")
+    tester.post_machine_add("test_name1", "test_location", "(1:22),(2:33)")
 
     edit1 = tester.post_machine_edit(1, "edit_test", "edit_location", "(1:24)")
     assert edit1.json == {
@@ -132,7 +132,7 @@ def test_edit_machine(tester: MachineTester, tester_product: ProductTester):
 def test_delete_machine(tester: MachineTester, tester_product: ProductTester):
     tester_product.post_product_add("test_name1", "100")
     tester_product.post_product_add("test_name2", "102")
-    tester.post_machine_add("test_name1", "test1_location", "(1:20),(2:30)")
+    tester.post_machine_add("test_name1", "test1_location", "(1:40),(2:60)")
     tester.post_machine_add("test_name2", "test2_location", "(1:20)")
     tester.post_machine_add_without_pid("test_name3", "test3_location")
 
