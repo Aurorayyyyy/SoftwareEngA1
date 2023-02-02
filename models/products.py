@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from extensions import db
-from models.stocks import VendingMCProduct
 
 
 @dataclass
@@ -15,16 +14,12 @@ class Product(db.Model):
     price = db.Column("price", db.Integer)
     belong = db.relationship("VendingMCProduct", backref="product", lazy=True)
 
-    def edit_product(self, name: str, price: int):
-        self.name = name
-        self.price = price
+    def edit_product(self, name: str, price: str):
+        if name != "None":
+            self.name = name
+        if price != "None":
+            self.price = int(price)
         db.session.commit()
-
-    def delete_all_relation_in_product(self, product_id: int):
-        if self:
-            for relation in self:
-                VendingMCProduct.delete(relation.vendingMC_id, product_id)
-            db.session.commit()
 
     @staticmethod
     def find_by_id(product_id: int) -> "Product":

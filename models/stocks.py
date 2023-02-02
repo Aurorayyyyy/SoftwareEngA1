@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 from extensions import db
 
@@ -36,6 +37,16 @@ class VendingMCProduct(db.Model):
             vendingMC_id=machine_id, product_id=product_id
         ).delete()
         db.session.commit()
+
+    @staticmethod
+    def delete_all_relation_in_product(product_id: int):
+        relations: List[VendingMCProduct] = VendingMCProduct.get_all_relation_by_prod(
+            product_id
+        )
+        if relations:
+            for relation in relations:
+                VendingMCProduct.delete(relation.vendingMC_id, product_id)
+            db.session.commit()
 
     def to_dict(self) -> dict:
         return {"product_id": self.product_id, "quantity": self.quantity}

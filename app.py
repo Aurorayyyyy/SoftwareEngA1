@@ -1,5 +1,3 @@
-from typing import List
-
 import yaml
 from flask import Blueprint, Flask, Response, jsonify, request
 
@@ -7,7 +5,7 @@ from extensions import db
 from models.machines import VendingMachine
 from models.products import Product
 from models.stocks import VendingMCProduct
-from utils import extract_product_id_and_quantity, get_formatting_list_of_product_id
+from utils import reformatting_product_id_and_quantity
 
 
 def create_app() -> Flask:
@@ -26,6 +24,12 @@ def create_app() -> Flask:
     # register blueprints
     app.register_blueprint(bp)
     return app
+
+
+def reset_database(app: Flask):
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
 
 
 bp = Blueprint("app", __name__)
@@ -56,7 +60,7 @@ def add_machine() -> Response:
     VendingMachine.add_machine(data["name"], data["location"])
     machine = VendingMachine.find_by_name(name=data["name"])
     if data["pid"] != "":
-        prod_id_and_quantity_list = extract_product_id_and_quantity(data["pid"])
+        prod_id_and_quantity_list = reformatting_product_id_and_quantity(data["pid"])
         for prod_id_and_quantity in prod_id_and_quantity_list:
             product_id, quantity = prod_id_and_quantity
             machine.add_product_to_the_stock(product_id, quantity)
@@ -70,9 +74,11 @@ def edit_machine(machine_id: int) -> Response:
     if machine:
         machine.edit_machine_name_and_location(data["name"], data["location"])
 
-        list_prod_id_and_quantity = extract_product_id_and_quantity(data["pid"])
-        all_product_id_in_machine = get_formatting_list_of_product_id(
-            machine, list_prod_id_and_quantity
+        list_prod_id_and_quantity = reformatting_product_id_and_quantity(data["pid"])
+        all_product_id_in_machine = (
+            machine.get_formatting_list_of_product_id_after_edit(
+                list_prod_id_and_quantity
+            )
         )
 
         for relation in VendingMCProduct.get_all_relation_by_mc(machine.id):
@@ -95,9 +101,11 @@ def delete_machine(machine_id: int) -> Response:
 @bp.route("/products/add", methods=["POST"])
 def add_product() -> Response:
     data = request.form
-    Product.add_product(data["name"], data["price"])
-    product = Product.find_by_name(name=data["name"])
-    return jsonify(product)
+    if data.get("name") != "None":
+        Product.add_product(data["name"], int(data["price"]))
+        product = Product.find_by_name(name=data["name"])
+        return jsonify(product)
+    return jsonify(Error="Cannot name as None")
 
 
 @bp.route("/products/edit/<int:product_id>", methods=["POST"])
@@ -105,7 +113,7 @@ def edit_product(product_id: int) -> Response:
     data = request.form
     product = Product.find_by_id(product_id)
     if product:
-        product.edit_product(data["name"], data["price"])
+        product.edit_product(str(data.get("name")), str(data.get("price")))
         return jsonify(product)
     return jsonify(Error="Product not found")
 
@@ -114,10 +122,7 @@ def edit_product(product_id: int) -> Response:
 def delete_product(product_id: int) -> Response:
     product: Product = Product.find_by_id(product_id)
     if product:
-        relations: List[VendingMCProduct] = VendingMCProduct.get_all_relation_by_prod(
-            product_id
-        )
-        relations.delete_all_relation_in_product(product_id)
+        VendingMCProduct.delete_all_relation_in_product(product.id)
         return jsonify(Message="Delete Successful")
     return jsonify(Error="Product not found")
 

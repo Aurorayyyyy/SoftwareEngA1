@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 
 from extensions import db
 from models.products import Product
@@ -47,6 +47,21 @@ class VendingMachine(db.Model):
             relation = VendingMCProduct.get(machine.id, product_id)
             relation.quantity = quantity
             db.session.commit()
+
+    def get_formatting_list_of_product_id_after_edit(
+        self, raw_list: List[Tuple[int, int]]
+    ) -> List[int]:
+        return_list: List[int] = []
+        for elem in raw_list:
+            product_id, product_quantity = elem
+            relation = VendingMCProduct.get(self.id, product_id)
+            if relation:
+                self.edit_product_in_machine(product_id, product_quantity)
+                return_list.append(product_id)
+            else:
+                self.add_product_to_the_stock(product_id, product_quantity)
+                return_list.append(product_id)
+        return return_list
 
     @staticmethod
     def delete_all_relation_in_machine(machine_id: int):

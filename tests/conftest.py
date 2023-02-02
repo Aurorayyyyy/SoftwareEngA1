@@ -4,6 +4,8 @@ import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 
+from app import reset_database
+
 
 @pytest.fixture()
 def app():
@@ -15,6 +17,7 @@ def app():
             "TESTING": True,
         }
     )
+    reset_database(app)
 
     # other setup can go here
 
