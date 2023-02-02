@@ -65,7 +65,7 @@ jobs:
         run: docker run -p ${{ secrets.DOCKER_PORT }} --name ${{ secrets.DOCKER_NAME }} -e MYSQL_ROOT_PASSWORD=${{ secrets.PASSWORD }} -e MYSQL_DATABASE=${{ secrets.DOCKER_DATABASE_NAME }} -d --restart=always mysql
 
       - name: Install dependencies
-        if: steps.poetry-cache.outputs.cache-hit != 'true'
+#        if: steps.poetry-cache.outputs.cache-hit != 'true'
         run: poetry install
 
       - name: Test with Pytest
