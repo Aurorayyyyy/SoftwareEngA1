@@ -9,7 +9,7 @@ I use docker to run the database server and sqlalchemy for interact with the dat
 
 This is the command I use to run the docker.
 ```
-docker run -p 127.0.0.1:13310:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=vendingMC =d --restart=always mysql
+docker run -p 127.0.0.1:13310:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=vendingMC -d --restart=always mysql
 ```
 
 ## Read All Machines & Products
