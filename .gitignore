@@ -7,3 +7,4 @@ __pycache__
 .idea/A1.iml
 .coverage
 coverage.xml
+poetry.lock
