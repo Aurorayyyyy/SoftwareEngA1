@@ -51,7 +51,7 @@ def get_all_machines() -> Response:
 
 @bp.route("/products", methods=["GET"])
 def get_all_product() -> Response:
-    return jsonify(Product.query.all())
+    return jsonify(Product.get_all())
 
 
 @bp.route("/machines/add", methods=["POST"])
@@ -123,6 +123,7 @@ def delete_product(product_id: int) -> Response:
     product: Product = Product.find_by_id(product_id)
     if product:
         VendingMCProduct.delete_all_relation_in_product(product.id)
+        Product.delete(product_id)
         return jsonify(Message="Delete Successful")
     return jsonify(Error="Product not found")
 

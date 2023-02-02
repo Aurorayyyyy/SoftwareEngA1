@@ -47,9 +47,7 @@ class ProductTester(Tester):
         return self.client.post(f"/products/edit/{product_id}")
 
     def post_product_delete(self, product_id: int) -> TestResponse:
-        return self.client.post(
-            f"/products/edit/{product_id}",
-        )
+        return self.client.post(f"/products/delete/{product_id}")
 
 
 @pytest.fixture()
@@ -90,3 +88,13 @@ def test_delete_product(tester: ProductTester):
     tester.post_product_add("test_name3", "100")
     tester.post_product_add("test_name4", "100")
     tester.post_product_add("test_name5", "100")
+
+    delete1 = tester.post_product_delete(1)
+    assert delete1.json == {"Message": "Delete Successful"}
+    tester.post_product_delete(2)
+    tester.post_product_delete(3)
+    tester.post_product_delete(4)
+    tester.post_product_delete(5)
+
+    get_all_response = tester.get_all()
+    assert get_all_response.json == []
