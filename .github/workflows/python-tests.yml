@@ -79,46 +79,46 @@ jobs:
           path: coverage.xml
           retention-days: 7
 
-  build-and-upload:
-    needs: [test-and-coverage]
-    if: ${{ github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install Poetry
-        run: |
-          curl -sL https://install.python-poetry.org | POETRY_VERSION=${{ env.POETRY_VERSION }} python - -y
-      - name: Configure Poetry
-        run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          poetry config virtualenvs.in-project true
-
-      - name: Set up Poetry cache
-        id: poetry-cache
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install dependencies
-#        if: steps.poetry-cache.outputs.cache-hit != 'true'
-        run: poetry install
-
-      - name: Build
-        run: |
-          poetry build
-
-      - name: Upload tarball and wheel
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist
-          if-no-files-found: error
+#  build-and-upload:
+#    needs: [test-and-coverage]
+#    if: ${{ github.ref == 'refs/heads/main' }}
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Set up Python ${{ env.PYTHON_VERSION }}
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: ${{ env.PYTHON_VERSION }}
+#      - name: Install Poetry
+#        run: |
+#          curl -sL https://install.python-poetry.org | POETRY_VERSION=${{ env.POETRY_VERSION }} python - -y
+#      - name: Configure Poetry
+#        run: |
+#          echo "$HOME/.local/bin" >> $GITHUB_PATH
+#          poetry config virtualenvs.in-project true
+#
+#      - name: Set up Poetry cache
+#        id: poetry-cache
+#        uses: actions/cache@v2
+#        with:
+#          path: .venv
+#          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+#
+#      - name: Install dependencies
+##        if: steps.poetry-cache.outputs.cache-hit != 'true'
+#        run: poetry install
+#
+#      - name: Build
+#        run: |
+#          poetry build
+#
+#      - name: Upload tarball and wheel
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: dist
+#          path: dist
+#          if-no-files-found: error
 
   sonarqube:
     # runs after test-and-coverage job
