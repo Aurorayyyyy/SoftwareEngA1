@@ -5,3 +5,6 @@ tex.txt
 __pycache__
 .idea/vcs.xml
 .idea/A1.iml
+.coverage
+coverage.xml
+poetry.lock
