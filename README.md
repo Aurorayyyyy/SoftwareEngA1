@@ -1,3 +1,5 @@
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Aurorayyyyy_SoftwareEngA1&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Aurorayyyyy_SoftwareEngA1)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Aurorayyyyy_SoftwareEngA1&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Aurorayyyyy_SoftwareEngA1)
 # Vending Machine Tracking Application to manage all the vending machines in muic (stock etc).
 
 ### In this project I use python-flask for creating the backend. For this project, it will only have backend that return json file. The way to test it out to use postman (which will explain below).
