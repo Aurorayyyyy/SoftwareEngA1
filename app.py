@@ -1,5 +1,6 @@
 import yaml
 from flask import Blueprint, Flask, Response, jsonify, request
+from flask_wtf import CSRFProtect
 
 from extensions import db
 from models.machines import VendingMachine
@@ -10,6 +11,8 @@ from utils import reformatting_product_id_and_quantity
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    csrf = CSRFProtect()
+    csrf.init_app(app)
     cred = yaml.load(open("cred.yaml"), Loader=yaml.Loader)
     host = cred["mysql_host"]
     user = cred["mysql_user"]

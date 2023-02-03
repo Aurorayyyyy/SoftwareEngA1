@@ -17,6 +17,11 @@ def app():
             "TESTING": True,
         }
     )
+    app.config.update(
+        {
+            "WTF_CSRF_CHECK_DEFAULT": False,
+        }
+    )
     reset_database(app)
 
     # other setup can go here

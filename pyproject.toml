@@ -18,6 +18,7 @@ flask = "^2.2.2"
 flask-sqlalchemy = "^3.0.3"
 pymysql = "^1.0.2"
 mysqlclient = "^2.1.1"
+flask-wtf = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core"]
