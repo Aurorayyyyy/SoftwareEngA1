@@ -142,6 +142,16 @@ def delete_product(product_id: int) -> Response:
     return jsonify(Error="Product not found")
 
 
+@bp.route("/time_stamp/all_stocks/<int:machine_id>", methods=["GET"])
+def get_all_stocks_time_stamps(machine_id: int) -> Response:
+    return jsonify(TimeStamp.get_all_stocks(machine_id))
+
+
+@bp.route("/time_stamp/all_products/<int:product_id>", methods=["GET"])
+def get_all_products_time_stamps(product_id: int) -> Response:
+    return jsonify(TimeStamp.get_all_products(product_id))
+
+
 if __name__ == "__main__":
     app = create_app()
     app.run()

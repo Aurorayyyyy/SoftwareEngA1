@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
 
 from flask import jsonify
 from sqlalchemy import JSON
@@ -39,3 +40,21 @@ class TimeStamp(db.Model):
             )
         )
         db.session.commit()
+
+    @staticmethod
+    def get_all_stocks(machine_id: int) -> "TimeStamp":
+        return TimeStamp.query.filter_by(vendingMC_id=machine_id).all()
+
+    @staticmethod
+    def get_all_products(product_id: int) -> List[dict]:
+        time_stamps = TimeStamp.query.filter_by(product_id=product_id).all()
+        products = []
+        for time_stamp in time_stamps:
+            products.append(
+                {
+                    "product_id": time_stamp.product_id,
+                    "quantity": time_stamp.quantity,
+                    "date": time_stamp.date,
+                }
+            )
+        return products
