@@ -26,15 +26,15 @@ class TimeStamp(db.Model):
     date = db.Column(db.DateTime, nullable=False)
 
     @staticmethod
-    def add_time_stamp(vendingMc_id: int, product_id: int, quantity: int):
+    def add_time_stamp(vendingMC_id: int, product_id: int, quantity: int):
 
         db.session.add(
             TimeStamp(
-                vendingMC_id=vendingMc_id,
+                vendingMC_id=vendingMC_id,
                 product_id=product_id,
                 quantity=quantity,
                 state=jsonify(
-                    VendingMCProduct.get_all_relation_by_mc(vendingMc_id)
+                    VendingMCProduct.get_all_relation_by_mc(vendingMC_id)
                 ).json,
                 date=dt.datetime.utcnow(),
             )

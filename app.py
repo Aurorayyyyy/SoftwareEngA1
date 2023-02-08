@@ -94,7 +94,7 @@ def edit_machine(machine_id: int) -> Response:
                 if relation.product_id not in all_product_id_in_machine:
                     VendingMCProduct.delete(machine.id, relation.product_id)
                     TimeStamp.add_time_stamp(
-                        vendingMc_id=machine.id,
+                        vendingMC_id=machine.id,
                         product_id=relation.product_id,
                         quantity=0,
                     )
@@ -144,12 +144,18 @@ def delete_product(product_id: int) -> Response:
 
 @bp.route("/time_stamp/all_stocks/<int:machine_id>", methods=["GET"])
 def get_all_stocks_time_stamps(machine_id: int) -> Response:
-    return jsonify(TimeStamp.get_all_stocks(machine_id))
+    machine: VendingMachine = VendingMachine.find_by_id(machine_id)
+    if machine:
+        return jsonify(TimeStamp.get_all_stocks(machine_id))
+    return jsonify(Error="Machine not found")
 
 
 @bp.route("/time_stamp/all_products/<int:product_id>", methods=["GET"])
 def get_all_products_time_stamps(product_id: int) -> Response:
-    return jsonify(TimeStamp.get_all_products(product_id))
+    product: Product = Product.find_by_id(product_id)
+    if product:
+        return jsonify(TimeStamp.get_all_products(product_id))
+    return jsonify(Error="Product not found")
 
 
 if __name__ == "__main__":

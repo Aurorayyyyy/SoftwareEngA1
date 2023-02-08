@@ -38,7 +38,7 @@ class VendingMachine(db.Model):
             )
             db.session.add(stock)
             TimeStamp.add_time_stamp(
-                vendingMc_id=self.id, product_id=product_id, quantity=quantity
+                vendingMC_id=self.id, product_id=product_id, quantity=quantity
             )
             db.session.commit()
 
@@ -53,7 +53,7 @@ class VendingMachine(db.Model):
             relation = VendingMCProduct.get(machine.id, product_id)
             relation.quantity = quantity
             TimeStamp.add_time_stamp(
-                vendingMc_id=self.id, product_id=product_id, quantity=quantity
+                vendingMC_id=self.id, product_id=product_id, quantity=quantity
             )
             db.session.commit()
 
@@ -81,7 +81,7 @@ class VendingMachine(db.Model):
                 for relation in relations:
                     VendingMCProduct.delete(machine.id, relation.product_id)
                     TimeStamp.add_time_stamp(
-                        vendingMc_id=machine.id,
+                        vendingMC_id=machine.id,
                         product_id=relation.product_id,
                         quantity=0,
                     )
