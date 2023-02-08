@@ -6,6 +6,7 @@ from extensions import db
 from models.machines import VendingMachine
 from models.products import Product
 from models.stocks import VendingMCProduct
+from models.time_stamp import TimeStamp
 from utils import reformatting_product_id_and_quantity
 
 
@@ -92,6 +93,11 @@ def edit_machine(machine_id: int) -> Response:
             for relation in VendingMCProduct.get_all_relation_by_mc(machine.id):
                 if relation.product_id not in all_product_id_in_machine:
                     VendingMCProduct.delete(machine.id, relation.product_id)
+                    TimeStamp.add_time_stamp(
+                        vendingMc_id=machine.id,
+                        product_id=relation.product_id,
+                        quantity=0,
+                    )
         return jsonify(machine)
     return jsonify(Error="Machine not found")
 
@@ -130,7 +136,7 @@ def edit_product(product_id: int) -> Response:
 def delete_product(product_id: int) -> Response:
     product: Product = Product.find_by_id(product_id)
     if product:
-        VendingMCProduct.delete_all_relation_in_product(product.id)
+        Product.delete_all_relation_in_product(product.id)
         Product.delete(product_id)
         return jsonify(Message="Delete Successful")
     return jsonify(Error="Product not found")
