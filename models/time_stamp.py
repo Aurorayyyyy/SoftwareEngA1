@@ -12,14 +12,14 @@ import datetime as dt
 
 @dataclass
 class TimeStamp(db.Model):
-    vendingMC_id: int
+    vending_machine_id: int
     product_id: int
     quantity: int
     state: JSON
     date: datetime
 
     id = db.Column("time_stamp_id", db.Integer, primary_key=True, autoincrement=True)
-    vendingMC_id = db.Column(db.Integer, nullable=False)
+    vending_machine_id = db.Column(db.Integer, nullable=False)
     product_id = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     state = db.Column(db.JSON, nullable=False)
@@ -30,7 +30,7 @@ class TimeStamp(db.Model):
 
         db.session.add(
             TimeStamp(
-                vendingMC_id=vending_machine_id,
+                vending_machine_id=vending_machine_id,
                 product_id=product_id,
                 quantity=quantity,
                 state=jsonify(
@@ -43,7 +43,7 @@ class TimeStamp(db.Model):
 
     @staticmethod
     def get_all_stocks(machine_id: int) -> "TimeStamp":
-        return TimeStamp.query.filter_by(vendingMC_id=machine_id).all()
+        return TimeStamp.query.filter_by(vending_machine_id=machine_id).all()
 
     @staticmethod
     def get_all_products(product_id: int) -> List[dict]:
