@@ -1,4 +1,4 @@
-mysql_host : '127.0.0.1:3308'
+mysql_host : '127.0.0.1:13310'
 mysql_user : 'root'
-mysql_password : 'rootpass'
+mysql_password : 'password'
 mysql_db : 'vendingMC'
