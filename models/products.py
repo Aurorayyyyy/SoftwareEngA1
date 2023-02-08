@@ -1,6 +1,9 @@
 from dataclasses import dataclass
+from typing import List
 
 from extensions import db
+from models.stocks import VendingMCProduct
+from models.time_stamp import TimeStamp
 
 
 @dataclass
@@ -45,3 +48,18 @@ class Product(db.Model):
     def delete(product_id: int):
         Product.query.filter_by(id=product_id).delete()
         db.session.commit()
+
+    @staticmethod
+    def delete_all_relation_in_product(product_id: int):
+        relations: List[VendingMCProduct] = VendingMCProduct.get_all_relation_by_prod(
+            product_id
+        )
+        if relations:
+            for relation in relations:
+                VendingMCProduct.delete(relation.vendingMC_id, product_id)
+                TimeStamp.add_time_stamp(
+                    vending_machine_id=relation.vendingMC_id,
+                    product_id=product_id,
+                    quantity=0,
+                )
+            db.session.commit()

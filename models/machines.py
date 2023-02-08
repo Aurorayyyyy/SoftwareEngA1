@@ -4,6 +4,7 @@ from typing import List, Tuple
 from extensions import db
 from models.products import Product
 from models.stocks import VendingMCProduct
+from models.time_stamp import TimeStamp
 
 
 @dataclass
@@ -13,7 +14,9 @@ class VendingMachine(db.Model):
     location: str
     machine_products: List["VendingMCProduct"]
 
-    id = db.Column("vendingMC_id", db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(
+        "vending_machine_id", db.Integer, primary_key=True, autoincrement=True
+    )
     name = db.Column("name", db.String(30), nullable=False, unique=True)
     location = db.Column("location", db.String(255), nullable=False)
     products = db.relationship("VendingMCProduct", backref="machine", lazy=True)
@@ -36,6 +39,9 @@ class VendingMachine(db.Model):
                 vendingMC_id=self.id, product_id=product_id, quantity=quantity
             )
             db.session.add(stock)
+            TimeStamp.add_time_stamp(
+                vending_machine_id=self.id, product_id=product_id, quantity=quantity
+            )
             db.session.commit()
 
     def add_product_to_the_stock(self, product_id: int, quantity: int):
@@ -48,6 +54,9 @@ class VendingMachine(db.Model):
         if machine:
             relation = VendingMCProduct.get(machine.id, product_id)
             relation.quantity = quantity
+            TimeStamp.add_time_stamp(
+                vending_machine_id=self.id, product_id=product_id, quantity=quantity
+            )
             db.session.commit()
 
     def get_formatting_list_of_product_id_after_edit(
@@ -73,6 +82,11 @@ class VendingMachine(db.Model):
             if relations:
                 for relation in relations:
                     VendingMCProduct.delete(machine.id, relation.product_id)
+                    TimeStamp.add_time_stamp(
+                        vending_machine_id=machine.id,
+                        product_id=relation.product_id,
+                        quantity=0,
+                    )
                 db.session.commit()
 
     @staticmethod
