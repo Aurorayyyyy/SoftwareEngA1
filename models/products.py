@@ -58,7 +58,7 @@ class Product(db.Model):
             for relation in relations:
                 VendingMCProduct.delete(relation.vendingMC_id, product_id)
                 TimeStamp.add_time_stamp(
-                    vendingMC_id=relation.vendingMC_id,
+                    vending_machine_id=relation.vendingMC_id,
                     product_id=product_id,
                     quantity=0,
                 )

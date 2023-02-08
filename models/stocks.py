@@ -9,7 +9,9 @@ class VendingMCProduct(db.Model):
     quantity: int
 
     vendingMC_id = db.Column(
-        db.Integer, db.ForeignKey("vending_machine.vendingMC_id"), primary_key=True
+        db.Integer,
+        db.ForeignKey("vending_machine.vending_machine_id"),
+        primary_key=True,
     )
     product_id = db.Column(
         db.Integer, db.ForeignKey("product.product_id"), primary_key=True

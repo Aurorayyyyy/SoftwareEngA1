@@ -44,7 +44,7 @@ def test_get_stocks_time_stamps(
     tester_machine.post_machine_add_without_pid("test_name2", "test2_location")
     test2 = tester_time_stamp.get_all_stocks_time_stamps(1)
     first_time_stamp = test2.json[0]
-    assert first_time_stamp["vendingMC_id"] == 1
+    assert first_time_stamp["vending_machine_id"] == 1
     assert first_time_stamp["product_id"] == 1
     assert first_time_stamp["quantity"] == 20
     test3 = tester_time_stamp.get_all_stocks_time_stamps(2)

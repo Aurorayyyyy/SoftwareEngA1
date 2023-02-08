@@ -9,6 +9,9 @@ from models.stocks import VendingMCProduct
 from models.time_stamp import TimeStamp
 from utils import reformatting_product_id_and_quantity
 
+machine_not_found = "Machine not found"
+product_not_found = "Product not found"
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -94,12 +97,12 @@ def edit_machine(machine_id: int) -> Response:
                 if relation.product_id not in all_product_id_in_machine:
                     VendingMCProduct.delete(machine.id, relation.product_id)
                     TimeStamp.add_time_stamp(
-                        vendingMC_id=machine.id,
+                        vending_machine_id=machine.id,
                         product_id=relation.product_id,
                         quantity=0,
                     )
         return jsonify(machine)
-    return jsonify(Error="Machine not found")
+    return jsonify(Error=machine_not_found)
 
 
 @bp.route("/machines/delete/<int:machine_id>", methods=["POST"])
@@ -109,7 +112,7 @@ def delete_machine(machine_id: int) -> Response:
         VendingMachine.delete_all_relation_in_machine(machine_id)
         VendingMachine.delete(machine_id)
         return jsonify(Message="Delete Successful")
-    return jsonify(Error="Machine not found")
+    return jsonify(Error=machine_not_found)
 
 
 @bp.route("/products/add", methods=["POST"])
@@ -129,7 +132,7 @@ def edit_product(product_id: int) -> Response:
     if product:
         product.edit_product(str(data.get("name")), str(data.get("price")))
         return jsonify(product)
-    return jsonify(Error="Product not found")
+    return jsonify(Error=product_not_found)
 
 
 @bp.route("/products/delete/<int:product_id>", methods=["POST"])
@@ -139,7 +142,7 @@ def delete_product(product_id: int) -> Response:
         Product.delete_all_relation_in_product(product.id)
         Product.delete(product_id)
         return jsonify(Message="Delete Successful")
-    return jsonify(Error="Product not found")
+    return jsonify(Error=product_not_found)
 
 
 @bp.route("/time_stamp/all_stocks/<int:machine_id>", methods=["GET"])
@@ -147,7 +150,7 @@ def get_all_stocks_time_stamps(machine_id: int) -> Response:
     machine: VendingMachine = VendingMachine.find_by_id(machine_id)
     if machine:
         return jsonify(TimeStamp.get_all_stocks(machine_id))
-    return jsonify(Error="Machine not found")
+    return jsonify(Error=machine_not_found)
 
 
 @bp.route("/time_stamp/all_products/<int:product_id>", methods=["GET"])
@@ -155,7 +158,7 @@ def get_all_products_time_stamps(product_id: int) -> Response:
     product: Product = Product.find_by_id(product_id)
     if product:
         return jsonify(TimeStamp.get_all_products(product_id))
-    return jsonify(Error="Product not found")
+    return jsonify(Error=product_not_found)
 
 
 if __name__ == "__main__":

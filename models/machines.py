@@ -14,7 +14,9 @@ class VendingMachine(db.Model):
     location: str
     machine_products: List["VendingMCProduct"]
 
-    id = db.Column("vendingMC_id", db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(
+        "vending_machine_id", db.Integer, primary_key=True, autoincrement=True
+    )
     name = db.Column("name", db.String(30), nullable=False, unique=True)
     location = db.Column("location", db.String(255), nullable=False)
     products = db.relationship("VendingMCProduct", backref="machine", lazy=True)
@@ -38,7 +40,7 @@ class VendingMachine(db.Model):
             )
             db.session.add(stock)
             TimeStamp.add_time_stamp(
-                vendingMC_id=self.id, product_id=product_id, quantity=quantity
+                vending_machine_id=self.id, product_id=product_id, quantity=quantity
             )
             db.session.commit()
 
@@ -53,7 +55,7 @@ class VendingMachine(db.Model):
             relation = VendingMCProduct.get(machine.id, product_id)
             relation.quantity = quantity
             TimeStamp.add_time_stamp(
-                vendingMC_id=self.id, product_id=product_id, quantity=quantity
+                vending_machine_id=self.id, product_id=product_id, quantity=quantity
             )
             db.session.commit()
 
@@ -81,7 +83,7 @@ class VendingMachine(db.Model):
                 for relation in relations:
                     VendingMCProduct.delete(machine.id, relation.product_id)
                     TimeStamp.add_time_stamp(
-                        vendingMC_id=machine.id,
+                        vending_machine_id=machine.id,
                         product_id=relation.product_id,
                         quantity=0,
                     )
