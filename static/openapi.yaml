@@ -1,0 +1,457 @@
+openapi: 3.0.3
+info:
+  title: vending_machine
+  version: "12.0"
+servers:
+  - url: /
+
+tags:
+  - name: vending_machine
+    description: Everything about vending_machine
+  - name: product
+    description: Everything about product
+  - name: time_stamp
+    description: Show time stamp
+
+paths:
+  /:
+    get:
+      summary: print welcome in the home page.
+      description: Welcome to Vending Machine Tracking Application. Try to read readme.md in the github repo if you do not understand.
+
+
+  /machines:
+    get:
+      tags:
+        - vending_machine
+      summary: Get all existing vending machines.
+      description: Don't have to pass parameter.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Machines'
+  /machines/add:
+    post:
+      tags:
+        - vending_machine
+      summary: Add vending machine.
+      description: need name and location as the parameter, and also product_id(pid) for create stock (Optional).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - location
+              properties:
+                name:
+                  type: string
+                  example: vendingMC
+                location:
+                  type: string
+                  example: location
+                pid:
+                  type: string
+                  example: (3:10),(4:10)
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Machines'
+        '405':
+          description: Invalid/Missing Input
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvalidInput'
+  /machines/edit/{machine_id}:
+    post:
+      tags:
+        - vending_machine
+      summary: Edit vending machine.
+      description: need name, location and product_id(pid) as the parameter (passing empty data in pid mean delete stock in that machine).
+      parameters:
+        - name: machine_id
+          in: path
+          description: Id of machine to edit.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - location
+              properties:
+                name:
+                  type: string
+                  example: vendingMC
+                location:
+                  type: string
+                  example: location
+                pid:
+                  type: string
+                  example: (3:10),(4:10)
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Machines'
+        '404':
+          description: Machine not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MachineNotFound'
+  /machines/delete/{machine_id}:
+    post:
+      tags:
+        - vending_machine
+      summary: Delete vending machine.
+      description: need machine id
+      parameters:
+        - name: machine_id
+          in: path
+          description: Id of machine to edit.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Delete'
+        '404':
+          description: Machine not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MachineNotFound'
+
+  /products:
+    get:
+      tags:
+        - product
+      summary: Get all existing products.
+      description: Don't have to pass parameter.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Products'
+  /products/add:
+    post:
+      tags:
+        - product
+      summary: Add product.
+      description: need name and price as the parameter.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - price
+              properties:
+                name:
+                  type: string
+                  example: product1
+                price:
+                  type: integer
+                  example: 69
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Products'
+        '405':
+          description: Invalid/Missing Input
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvalidInput'
+
+  /products/edit/{product_id}:
+    post:
+      tags:
+        - product
+      summary: Edit product.
+      description: need name, price as the parameter.
+      parameters:
+        - name: product_id
+          in: path
+          description: Id of product to edit.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - price
+              properties:
+                name:
+                  type: string
+                  example: product1
+                price:
+                  type: integer
+                  example: 69
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Products'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductNotFound'
+
+  /products/delete/{product_id}:
+    post:
+      tags:
+        - product
+      summary: Delete product by id.
+      description: need product id
+      parameters:
+        - name: product_id
+          in: path
+          description: Id of machine to edit.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Delete'
+        '404':
+          description: Machine not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductNotFound'
+
+  /time_stamp/all_stocks/{machine_id}:
+    get:
+      tags:
+        - time_stamp
+      summary: get the all time stamp by machine id.
+      description: need machine id
+      parameters:
+        - name: machine_id
+          in: path
+          description: Id of machine to get time stamp.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeStampMachine'
+        '404':
+          description: Machine not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MachineNotFound'
+  /time_stamp/all_products/{product_id}:
+    get:
+      tags:
+        - time_stamp
+      summary: get the all time stamp by product id.
+      description: need product id
+      parameters:
+        - name: product_id
+          in: path
+          description: Id of product to get time stamp.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeStampProduct'
+        '404':
+          description: Machine not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductNotFound'
+
+
+
+
+
+
+components:
+  schemas:
+    Machines:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          format: int64
+          example: vendingMC1
+        location:
+          type: string
+          format: int64
+          example: location
+        machine_products:
+          type: array
+          format: int64
+          example: [{product_id: 1, quantity: 10}, {product_id: 2, quantity: 10}]
+    Delete:
+      type: object
+      properties:
+        Message:
+          type: string
+          format: int64
+          example: "Delete Successful"
+    MachineNotFound:
+      type: object
+      properties:
+        Message:
+          type: string
+          format: int64
+          example: "Machine not found"
+
+
+    Products:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          format: int64
+          example: product1
+        price:
+          type: integer
+          format: int64
+          example: 69
+    InvalidInput:
+      type: object
+      properties:
+        Message:
+          type: string
+          format: int64
+          example: "Invalid/missing input"
+    ProductNotFound:
+      type: object
+      properties:
+        Message:
+          type: string
+          format: int64
+          example: "Product not found"
+
+
+    TimeStampMachine:
+      type: object
+      example: [
+        {
+          "time_stamp_id": 1,
+          "vending_machine_id": 1,
+          "product_id": 1,
+          "quantity": 10,
+          "state": [ { "quantity": 10, "product_id": 1 } ],
+          "date": "2023-02-23 06:09:33"
+        },
+        {
+          "time_stamp_id": 2,
+          "vending_machine_id": 1,
+          "product_id": 2,
+          "quantity": 10,
+          "state": [{"quantity": 10, "product_id": 1}, {"quantity": 10, "product_id": 2}],
+          "date": "2023-02-23 06:09:33"
+        }
+      ]
+    TimeStampProduct:
+      type: object
+      example:
+        {
+          "time_stamp_id": 1,
+          "vending_machine_id": 1,
+          "product_id": 1,
+          "quantity": 10,
+          "state": [ { "quantity": 10, "product_id": 1 } ],
+          "date": "2023-02-23 06:09:33"
+        }
