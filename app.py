@@ -98,6 +98,10 @@ def edit_machine(machine_id: int) -> Response:
             machine.edit_machine_name_and_location(
                 str(data.get("name")), str(data.get("location"))
             )
+        if data.get("name") is not None:
+            machine.edit_machine_name(str(data.get("name")))
+        elif data.get("location") is not None:
+            machine.edit_machine_location(str(data.get("location")))
 
         all_product_id_in_machine = list(tuple())
         if data.get("pid") is not None and data.get("pid") != "":

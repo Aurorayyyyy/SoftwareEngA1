@@ -26,11 +26,17 @@ class VendingMachine(db.Model):
         stocks = VendingMCProduct.query.filter_by(vendingMC_id=self.id).all()
         return [stock.to_dict() for stock in stocks]
 
+    def edit_machine_name(self, name: str):
+        self.name = name
+        db.session.commit()
+
+    def edit_machine_location(self, location: str):
+        self.location = location
+        db.session.commit()
+
     def edit_machine_name_and_location(self, name: str, location: str):
-        if name != "None":
-            self.name = name
-        if location != "None":
-            self.location = location
+        self.name = name
+        self.location = location
         db.session.commit()
 
     def add_product(self, product_id: int, quantity: int):
