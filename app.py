@@ -1,6 +1,7 @@
 import yaml
 from flask import Blueprint, Flask, Response, jsonify, request
 from flask_wtf import CSRFProtect
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from extensions import db
 from models.machines import VendingMachine
@@ -11,6 +12,7 @@ from utils import reformatting_product_id_and_quantity
 
 machine_not_found = "Machine not found"
 product_not_found = "Product not found"
+invalid_missing_input = "Invalid/missing input"
 
 
 def create_app() -> Flask:
@@ -30,6 +32,15 @@ def create_app() -> Flask:
 
     # register blueprints
     app.register_blueprint(bp)
+
+    SWAGGER_URL = "/swagger"
+    API_URL = "../static/openapi.yaml"
+    SWAGGER_BLUEPRINT = get_swaggerui_blueprint(
+        SWAGGER_URL, API_URL, config={"app_name": "vending_machine"}
+    )
+
+    app.register_blueprint(SWAGGER_BLUEPRINT, url_prefix=SWAGGER_URL)
+
     return app
 
 
@@ -64,14 +75,18 @@ def get_all_product() -> Response:
 @bp.route("/machines/add", methods=["POST"])
 def add_machine() -> Response:
     data = request.form
-    VendingMachine.add_machine(data["name"], data["location"])
-    machine = VendingMachine.find_by_name(name=data["name"])
-    if data.get("pid") != "" and data.get("pid") is not None:
-        prod_id_and_quantity_list = reformatting_product_id_and_quantity(data["pid"])
-        for prod_id_and_quantity in prod_id_and_quantity_list:
-            product_id, quantity = prod_id_and_quantity
-            machine.add_product_to_the_stock(product_id, quantity)
-    return jsonify(machine)
+    if data.get("name") is not None and data.get("location") is not None:
+        VendingMachine.add_machine(data["name"], data["location"])
+        machine = VendingMachine.find_by_name(name=data["name"])
+        if data.get("pid") != "" and data.get("pid") is not None:
+            prod_id_and_quantity_list = reformatting_product_id_and_quantity(
+                data["pid"]
+            )
+            for prod_id_and_quantity in prod_id_and_quantity_list:
+                product_id, quantity = prod_id_and_quantity
+                machine.add_product_to_the_stock(product_id, quantity)
+        return jsonify(machine)
+    return jsonify(Error=invalid_missing_input)
 
 
 @bp.route("/machines/edit/<int:machine_id>", methods=["POST"])
@@ -79,9 +94,15 @@ def edit_machine(machine_id: int) -> Response:
     data = request.form
     machine = VendingMachine.find_by_id(machine_id)
     if machine:
-        machine.edit_machine_name_and_location(
-            str(data.get("name")), str(data.get("location"))
-        )
+        if data.get("name") is not None and data.get("location") is not None:
+            machine.edit_machine_name_and_location(
+                str(data.get("name")), str(data.get("location"))
+            )
+        if data.get("name") is not None:
+            machine.edit_machine_name(str(data.get("name")))
+        elif data.get("location") is not None:
+            machine.edit_machine_location(str(data.get("location")))
+
         all_product_id_in_machine = list(tuple())
         if data.get("pid") is not None and data.get("pid") != "":
             list_prod_id_and_quantity = reformatting_product_id_and_quantity(
@@ -122,7 +143,7 @@ def add_product() -> Response:
         Product.add_product(data["name"], int(data["price"]))
         product = Product.find_by_name(name=data["name"])
         return jsonify(product)
-    return jsonify(Error="Cannot name as None")
+    return jsonify(Error=invalid_missing_input)
 
 
 @bp.route("/products/edit/<int:product_id>", methods=["POST"])
