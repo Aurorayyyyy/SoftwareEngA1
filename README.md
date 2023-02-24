@@ -5,7 +5,7 @@
 ### In this project I use python-flask for creating the backend. For this project, it will only have backend that return json file. The way to test it out to use postman (which will explain below).
 
 ## Database Model
-![Database_A1-2](https://user-images.githubusercontent.com/104582029/213465209-07e3101a-13dc-4681-89cd-e9c9d4914301.jpg)
+![database_ER](https://user-images.githubusercontent.com/104582029/221108080-edadfe66-78eb-4a25-b8f4-7599d7fb92d7.png)
 
 I use docker to run the database server and sqlalchemy for interact with the database.
 
